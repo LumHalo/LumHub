@@ -17,8 +17,14 @@ Rgbw rgbw = Rgbw(
 );
 
 typedef WS2811<LED_PIN_GPIO, RGB> ControllerT1;
+typedef WS2811<LED_PIN_2_GPIO, RGB> ControllerT2;
+typedef WS2811<LED_PIN_3_GPIO, RGB> ControllerT3;
+typedef WS2811<LED_PIN_4_GPIO, RGB> ControllerT4;
 
 static RGBWEmulatedController<ControllerT1, RGB> rgbwEmu1(rgbw);
+static RGBWEmulatedController<ControllerT2, RGB> rgbwEmu2(rgbw);
+static RGBWEmulatedController<ControllerT3, RGB> rgbwEmu3(rgbw);
+static RGBWEmulatedController<ControllerT4, RGB> rgbwEmu4(rgbw);
 
 CRGB strip[NUM_LEDS];
 CRGB strip2[NUM_LEDS];
@@ -26,9 +32,9 @@ CRGB strip3[NUM_LEDS];
 CRGB strip4[NUM_LEDS];
 
 Fixture fixture(1, 1, 2, NUM_LEDS, strip); //Id, Dmx, Mode, NumLeds, Strip
-Fixture fixture2(2, 1, 2, NUM_LEDS, strip2);
-Fixture fixture3(3, 11, 0, NUM_LEDS, strip3);
-Fixture fixture4(4, 16, 0, NUM_LEDS, strip4);
+Fixture fixture2(2, 66, 2, NUM_LEDS, strip2);
+Fixture fixture3(3, 131, 2, NUM_LEDS, strip3);
+Fixture fixture4(4, 196, 2, NUM_LEDS, strip4);
 
 FixtureManagement fixtureManagement;
 SerialManagement serialManagement;
@@ -40,20 +46,12 @@ void setup() {
     btStop();
     WiFi.mode(WIFI_OFF);
 
-    //FastLED.addLeds<WS2811, LED_PIN_GPIO, RGB>(strip, NUM_LEDS).setRgbw(RgbwDefault());
     FastLED.addLeds(&rgbwEmu1, strip, NUM_LEDS);
-    FastLED.addLeds<WS2811, LED_PIN_2_GPIO, BRG>(strip2, NUM_LEDS);
-    FastLED.addLeds<WS2811, LED_PIN_3_GPIO, RGB>(strip3, NUM_LEDS).setCorrection(0xFFE0B1);
-    FastLED.addLeds<WS2811, LED_PIN_4_GPIO, RGB>(strip4, NUM_LEDS).setCorrection(0xFFE0B1);
+    FastLED.addLeds(&rgbwEmu2, strip2, NUM_LEDS);
+    FastLED.addLeds(&rgbwEmu3, strip3, NUM_LEDS);
+    FastLED.addLeds(&rgbwEmu4, strip4, NUM_LEDS);
     FastLED.setBrightness(255);
     FastLED.setDither(true);
-
-    /* strip.fill(0, 0, 0);
-    strip2.fill(0, 0, 0);
-    strip3.fill(0, 0, 0);
-    strip4.fill(0, 0, 0); */
-
-    //.setTemperature(CRGB(255, 235, 220))
     
     fixtureManagement.addFixture(&fixture);  // Ajout de la fixture au gestionnaire de fixtures
     fixtureManagement.addFixture(&fixture2);
