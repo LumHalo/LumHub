@@ -38,7 +38,7 @@ private:
 
     bool previousCheck(uint8_t* dmxStart);
     void setPreviousData(uint8_t* dmxStart);
-    void setPixels(uint8_t* dmxStart);
+    void setPixels(uint8_t* dmxStart, uint8_t intensity);
 };
 
 #endif // FIXTURE_H

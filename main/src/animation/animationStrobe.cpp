@@ -52,7 +52,7 @@ void AnimationStrobe::setColor(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 void AnimationStrobe::setSpeed(float speed) {
-    this->speed = constrain(speed, 1.0, 60.0); // 1 = lent, 60 = très rapide
+    this->speed = constrain(speed, 1.0, 29.0); // 1Hz = lent, 29Hz = très rapide
 }
 
 void AnimationStrobe::setIntensity(uint8_t intensity) {
@@ -65,7 +65,7 @@ void AnimationStrobe::taskFunction(void* parameter) {
     while (instance->isActive()) {
         instance->update();
         // Vitesse en flashs par seconde → on la convertit en délai
-        float delayMs = 1000.0f / instance->speed;
+        float delayMs = 500.0f / instance->speed;
         vTaskDelay(pdMS_TO_TICKS(delayMs));
     }
     vTaskDelete(NULL);

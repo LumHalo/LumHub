@@ -30,7 +30,7 @@ void Fixture::processDMXData(uint8_t* dmxData) {
 
     setPreviousData(dmxData);
 
-    if (mode == 0 || mode == 2 && (dmxData[0] != 0 || dmxData[1] != 0 || dmxData[2] != 0 || dmxData[3] != 0 || dmxData[4] != 0)) {
+    if (mode == 0 || mode == 2 && (dmxData[1] != 0 || dmxData[2] != 0 || dmxData[3] != 0 || dmxData[4] != 0)) {
         uint8_t globalIntensity = dmxData[0];
         uint8_t redValue = dmxData[1];
         uint8_t greenValue = dmxData[2];
@@ -46,9 +46,9 @@ void Fixture::processDMXData(uint8_t* dmxData) {
     } else {
         deleteAnimation();
         if (mode == 2) {
-            setPixels(&dmxData[5]);
+            setPixels(&dmxData[5], dmxData[0]);
         } else {
-            setPixels(dmxData);
+            setPixels(dmxData, 255);
         }
     }
 }
@@ -75,12 +75,12 @@ void Fixture::setPreviousData(uint8_t* dmxData) {
     }
 }
 
-void Fixture::setPixels(uint8_t* dmxData) {
+void Fixture::setPixels(uint8_t* dmxData, uint8_t intensity) {
     for (int i = 0; i < numPixels; i++) {
         strip[i] = CRGB(
-            dim8_video(dmxData[i * 3]),
-            dim8_video(dmxData[1 + i * 3]),
-            dim8_video(dmxData[2 + i * 3])
+            scale8_video(dmxData[i * 3], intensity),
+            scale8_video(dmxData[1 + i * 3], intensity),
+            scale8_video(dmxData[2 + i * 3], intensity)
         );
     }
 
@@ -173,7 +173,7 @@ void Fixture::activateAnimation(uint8_t animationIndicator, uint8_t intensity, u
             animation->setIntensity(intensity);
         }
     } else if (animationIndicator > 150 && animationIndicator <= 180){ //STARS
-        float speed = map(animationIndicator, 150, 180, 1.0, 30.0);
+        float speed = map(animationIndicator, 151, 180, 1.0, 30.0);
         if (animationType != STARS) {
             deleteAnimation();
             animation = new AnimationStars(strip, numPixels, redValue, greenValue, blueValue, intensity, speed);
@@ -184,8 +184,8 @@ void Fixture::activateAnimation(uint8_t animationIndicator, uint8_t intensity, u
             animation->setSpeed(speed);
             animation->setIntensity(intensity);
         }
-    } else if (animationIndicator > 181 && animationIndicator <= 210){ //STROBE
-        float speed = map(animationIndicator, 181, 210, 1.0, 60.0);
+    } else if (animationIndicator > 180 && animationIndicator <= 210){ //STROBE
+        float speed = map(animationIndicator, 181, 210, 1.0, 29.0);
         if (animationType != STROBE) {
             deleteAnimation();
             animation = new AnimationStrobe(strip, numPixels, redValue, greenValue, blueValue, intensity, speed);
